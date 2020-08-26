@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>NPPES Search</title>
+</head>
+<body>
+    <div>
+        <h2>NPPES Information</h2>
+        <ul number="number" />
+    </div>
+    <div>
+        <h2>Search by number</h2>
+        <input type="text" id="number" size="10" />
+        <input type="button" value="Search" onclick="find();" />
+        <p number="number" />
+    </div>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jQuery-2.0.3.min.js"></script>
+    <script>
+        number = '1083745863';
+        var uri = 'https://npiregistry.cms.hhs.gov/api/?number=' + number;
+
+	$(document).ready(function () {
+	// Send an AJAX request
+	$.getJSON(uri)
+		.done(function (data) {
+		// On success, 'data' contains a list of numbers.
+		$.each(data, function (key, item) {
+		// Add a list item for the number.
+		$('<li>', { text: formatItem(item) }).appendTo($('#number'));
+			});
+		});
+	});
+
+	function formatItem(item) {
+		return item.first_name + ' ' + item.last_name;
+	}
+
+	function find() {
+	var number = $('#number').val();
+	$.getJSON(uri + '/' + number)
+		.done(function (data) {
+			$('#number').text(formatItem(data));
+		})
+		.fail(function (jqXHR, textStatus, err) {
+			$('#number').text('Error: ' + err);
+		});
+	}
+    </script>
+</body>
+</html>
